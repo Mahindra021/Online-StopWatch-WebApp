@@ -6,7 +6,7 @@ const NavBar = () => {
 
   return (
 
-    <div>
+    <nav>
 
         <div className='flex place-content-between m-1 p-3'>
 
@@ -41,7 +41,7 @@ const NavBar = () => {
         
         <div className='border-2 border-black w-full'></div>
     
-    </div>
+    </nav>
   )
 }
 

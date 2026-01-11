@@ -52,7 +52,7 @@ const StopWatch = () => {
 
   return (
 
-    <div className='flex flex-col m-auto mt-10 items-center gap-7'>
+    <div className='flex flex-col m-auto mt-10 items-center gap-7 stopwatch-container'>
 
       <h1 className='font-bold text-[35px]'>Online StopWatch</h1>
       <p className='font-medium text-[17px]'>Enjoy a free online stopwatch that is quick, easy to use! Also a countdown timer, alarm and world clock!</p>
