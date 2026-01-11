@@ -1,9 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef } from 'react'
 
 const StopWatch = () => {
 
   const [time, setTime] = useState(0);
   const [isPaused, setIsPaused] = useState(true);
+
+  const disableReset = time === 0;
+
   let interval = useRef(null);
 
   function handleStartWatch(){
@@ -65,8 +68,16 @@ const StopWatch = () => {
           <button className='border-2 border-black rounded-[100%] px-4 py-9 font-semibold bg-green-500 text-white text-[30px] hover:bg-green-600' onClick={handleStartWatch}>
             {isPaused? "Start":"Pause"}
           </button>
-          <button className='border-2 border-black rounded-[100%] px-4 py-9 font-semibold bg-orange-500 text-white text-[30px] hover:bg-orange-600' onClick={resetWatch}>Reset</button>
 
+          {
+            disableReset ? 
+            
+            <button disabled={true} className='border-2 border-black rounded-[100%] px-4 py-9 font-semibold bg-orange-500 text-white text-[30px] hover:bg-orange-600 cursor-not-allowed opacity-70' onClick={resetWatch}>Reset</button>
+
+            :
+
+            <button className='border-2 border-black rounded-[100%] px-4 py-9 font-semibold bg-orange-500 text-white text-[30px] hover:bg-orange-600' onClick={resetWatch}>Reset</button>
+          }
         </div>
       </div>
 

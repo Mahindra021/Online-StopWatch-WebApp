@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import '../components/Timer.css';
 import timerAlaram from '../assets/TimerRing.mp3'
-import { FaVolumeUp, FaVolumeMute } from "react-icons/fa";
+import { FaVolumeUp, FaVolumeMute, FaBell } from "react-icons/fa";
 
 const Timer = () => {
 
@@ -12,10 +12,11 @@ const Timer = () => {
 
   const [isPaused, setIsPaused] = useState(false);
   const [isEdited, setIsEdited] = useState(false);
-  const [isDisable, setIsDiable] = useState(false);
+  const [isDisable, setIsDisable] = useState(false);
   const [initStartDisable, setInitStartDisable] = useState(true)
   const [isMuted, setIsMuted] = useState(false);
-  const [isDone, setIsDone] = useState(false);
+
+  const [isOk, setIsOk] = useState(false);
 
   const [inputSeconds, setInputSeconds] = useState("");
   const [inputMinutes, setInputMinutes] = useState("");
@@ -23,13 +24,20 @@ const Timer = () => {
 
   function handleTimer(){
 
-    if (!isPaused)
-      startTimer();
-    else 
-      stopTimer();
+    if (isOk){
 
-    setIsPaused(!isPaused);
-    setIsDiable(true);
+      setIsOk(false);
+      audioRef.current.pause();
+    }else {
+
+      if (!isPaused)
+        startTimer();
+      else 
+        stopTimer();
+      
+      setIsPaused(!isPaused);
+      setIsDisable(true);
+    }
   }
 
   function startTimer(){
@@ -47,11 +55,11 @@ const Timer = () => {
           clearInterval(interval.current);
           setIsPaused(false);
 
-          setIsDiable(false);
+          setIsDisable(false);
           setInitStartDisable(true);
           setIsEdited(false);
 
-          // setIsDone(!isDone);
+          setIsOk(true);
 
           return 0;
         }
@@ -68,7 +76,7 @@ const Timer = () => {
 
   function resetTimer(){
 
-    setIsDiable(false);
+    setIsDisable(false);
     setInitStartDisable(true);
     stopTimer();
     setIsPaused(false);
@@ -104,9 +112,15 @@ const Timer = () => {
 
       <div className='flex flex-col mt-10 justify-center items-center m-auto gap-5 tabular-nums font-mono'>
 
-        <div className='flex flex-col w-[280px] h-[280px] rounded-full border-4 border-black items-center justify-center'>
+        
+        <div 
+          className={ isOk ? 'flex flex-col w-[280px] h-[280px] rounded-full border-4 border-black items-center justify-center bg-green-700'
+            : 'flex flex-col w-[280px] h-[280px] rounded-full border-4 border-black items-center justify-center'}
+            >
 
-          <div className='flex gap-3 border-transparent justify-center items-center text-[19px]'>
+          {isOk && (<FaBell className="text-5xl text-white animate-bell" />)}
+          
+          <div className={ isOk == false ? 'flex gap-3 border-transparent justify-center items-center text-[19px]' : 'hidden'}>
 
             {
               isEdited ?
@@ -116,9 +130,9 @@ const Timer = () => {
                     {
                       const val = e.target.value;
 
-                      if (val === "" || val >= 0 && val <= 24){
+                      if (val === "" || (Number(val) >= 0 && Number(val) <= 24)){
 
-                        setInputHours(e.target.value)}} 
+                        setInputHours(val)}} 
                       }
                     }
                   placeholder='HH' 
@@ -135,9 +149,9 @@ const Timer = () => {
                 <input type='number' min={0} max={59} value={inputMinutes} 
                   onChange={(e) => {
                     const val = e.target.value;
-                    if (val === "" || val >= 0 && val <= 59){
+                    if (val === "" || (Number(val) >= 0 && Number(val) <= 59)){
 
-                      setInputMinutes(e.target.value)}
+                      setInputMinutes(val)}
                     } 
                   }
 
@@ -154,7 +168,8 @@ const Timer = () => {
 
                 <input type='number' min={0} max={59} step={1} value={inputSeconds} 
 
-                  onChange={(e) => { {const val = e.target.value; 
+                  onChange={(e) => { {
+                    const val = e.target.value; 
 
                     if (val === "" || (Number(val) >= 0 && Number(val) <= 59)){
 
@@ -177,7 +192,7 @@ const Timer = () => {
               <button
                 className="cursor-pointer text-2xl  text-gray-700 hover:text-black"
                 onClick={() => setIsMuted(!isMuted)}>
-                {isMuted ? <FaVolumeMute /> : <FaVolumeUp />}
+                {isMuted ? <FaVolumeMute className={isOk ? 'text-white' : 'text-black'}/> : <FaVolumeUp className={isOk ? 'text-white' : 'text-black'}/>}
               </button>
 
               <audio ref={audioRef} src={timerAlaram} muted={isMuted}></audio>
@@ -190,44 +205,46 @@ const Timer = () => {
 
           {
 
-            !isDisable?
+            !isDisable && isOk == false?
 
               <button className='border-2 border-black rounded-[30px] px-4 py-1 font-semibold bg-zinc-500 text-white text-[30px] hover:bg-zinc-600' onClick={isEdited ? handleSave : () => setIsEdited(true)}>
               {isEdited ? "Save" : "Edit"} 
               </button>
 
-              :
+            :
 
-              <button disabled={true} className='border-2 border-black rounded-[30px] px-4 py-1 font-semibold bg-zinc-500 text-white text-[30px] hover:bg-zinc-600' onClick={isEdited ? handleSave : () => setIsEdited(true)}>
+              <button disabled={true} className='border-2 border-black rounded-[30px] px-4 py-1 font-semibold bg-zinc-500 text-white text-[30px] hover:bg-zinc-600 cursor-not-allowed opacity-70' onClick={isEdited ? handleSave : () => setIsEdited(true)}>
               {isEdited ? "Save" : "Edit"} 
               </button>
           }
 
           {
-            isEdited == true || initStartDisable == true?
+            (isEdited == true || initStartDisable == true) && isOk == false ?
 
-              <button disabled={true} className='border-2 border-black rounded-[100%] px-4 py-9 font-semibold bg-green-500 text-white text-[30px] hover:bg-green-600' 
+              <button disabled={true} className='border-2 border-black w-[120px] h-[120px] rounded-full px-4 py-9 font-semibold bg-green-500 text-white text-[30px] hover:bg-green-600 cursor-not-allowed opacity-70' 
                 onClick={handleTimer}>
-                {isDone ? "Ok" : (!isPaused ? "Start" : "Pause")}
+                  {!isPaused ? "Start" : "Pause"}
               </button>
 
-              :
+            :
 
-              <button className='border-2 border-black rounded-[100%] px-4 py-9 font-semibold bg-green-500 text-white text-[30px] hover:bg-green-600' 
+              <button className='border-2 border-black w-[120px] h-[120px] rounded-full px-4 py-9 font-semibold bg-green-500 text-white text-[30px] hover:bg-green-600' 
                 onClick={handleTimer}>
-                {!isPaused ? "Start" : "Pause"}
+                { isOk ? "Ok" : (!isPaused ? "Start" : "Pause")}
               </button>
           }
 
           { 
-            isDisable ? 
+            isDisable? 
 
               <button className='border-2 border-black rounded-[30px] px-3 py-1 font-semibold bg-orange-500 text-white text-[30px] hover:bg-orange-600' 
                 onClick={resetTimer} 
                 >Reset
               </button> 
+
             : 
-              <button disabled={true} className='border-2 border-black rounded-[30px] px-3 py-1 font-semibold bg-orange-500 text-white text-[30px] hover:bg-orange-600' 
+
+              <button disabled={true} className='border-2 border-black rounded-[30px] px-3 py-1 font-semibold bg-orange-500 text-white text-[30px] hover:bg-orange-600 cursor-not-allowed opacity-70' 
                 onClick={resetTimer} 
                 >Reset
               </button>

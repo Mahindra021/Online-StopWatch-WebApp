@@ -5,6 +5,7 @@ import NavBar from './components/NavBar'
 import StopWatch from './components/StopWatch'
 import Timer from './components/Timer'
 import Alaram from './components/Alaram'
+import WorldClock from './components/WorldClock'
 
 const router = createBrowserRouter(
   [
@@ -38,6 +39,14 @@ const router = createBrowserRouter(
         <div>
           <NavBar/>
           <Alaram/>
+        </div>
+    }, 
+    {
+      path: '/worldclock',
+      element:
+        <div>
+          <NavBar/>
+          <WorldClock/>
         </div>
     }
   ]
