@@ -10,7 +10,7 @@ const NavBar = () => {
 
         <div className='flex place-content-between m-1 p-3'>
 
-            <div className='flex'>
+            <div className='flex items-center'>
                 <img className='w-[50px]' src={logo} alt='TimeMaster'/>
                 <img className='w-[150px]' src={logoName} alt='TimeMaster'/>
             </div>
